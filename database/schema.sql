@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     approver_id INTEGER, -- ผู้พิจารณาคำขอ
     approved_at DATETIME,
     rejection_reason TEXT,
+    document_url TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (department_id) REFERENCES departments(id),
     FOREIGN KEY (approver_id) REFERENCES users(id)

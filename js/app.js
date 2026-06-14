@@ -459,7 +459,8 @@ document.addEventListener('DOMContentLoaded', () => {
             passenger_details: passengerListText,
             start_date_time: startDateTimeStr,
             end_date_time: endDateTimeStr,
-            requested_vehicle_type: requestedVehicleVal
+            requested_vehicle_type: requestedVehicleVal,
+            document_url: document.getElementById('booking-doc-url').value.trim()
         };
 
         const newBooking = db.createBooking(formData);
@@ -700,6 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${booking.vehicle_change_note ? `<tr><td style="font-weight: bold; color: var(--color-rejected);">หมายเหตุการจัดรถ</td><td style="color: var(--color-rejected); font-weight: bold;"><i class="fas fa-info-circle"></i> ${booking.vehicle_change_note}</td></tr>` : ''}
                 <tr><td style="font-weight: bold;">หมายเลขทะเบียนรถ</td><td>${licensePlateText}</td></tr>
                 <tr><td style="font-weight: bold;">การจัดสรรคนขับ</td><td>${resourceText}</td></tr>
+                ${booking.document_url ? `<tr><td style="font-weight: bold;">เอกสารแนบที่เกี่ยวข้อง</td><td><a href="${booking.document_url}" target="_blank" class="btn btn-secondary" style="font-size: 12px; padding: 4px 8px; display: inline-flex; align-items: center; gap: 5px; text-decoration: none;"><i class="fas fa-external-link-alt"></i> เปิดดูเอกสารแนบ (คำสั่ง/หนังสือ)</a></td></tr>` : ''}
             </table>
         `;
         

@@ -376,6 +376,7 @@ const db = {
             approver_id: null,
             approved_at: null,
             rejection_reason: null,
+            document_url: bookingData.document_url || null,
             created_at: new Date().toISOString()
         };
         

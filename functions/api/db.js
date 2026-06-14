@@ -14,7 +14,7 @@ const schemaColumns = {
     users: ['id', 'username', 'password', 'email', 'full_name', 'role', 'department_id', 'phone', 'status', 'created_at'],
     vehicles: ['id', 'license_plate', 'brand', 'model', 'type', 'capacity', 'status', 'current_mileage', 'standard_fuel_consumption', 'purchase_date', 'purchase_cost', 'created_at'],
     drivers: ['id', 'user_id', 'full_name', 'license_number', 'phone', 'status', 'created_at'],
-    bookings: ['id', 'booking_reference', 'requester_name', 'requester_phone', 'requester_position', 'department_id', 'objective', 'destination', 'passenger_count', 'passenger_details', 'start_date_time', 'end_date_time', 'requested_vehicle_type', 'status', 'approver_id', 'approved_at', 'rejection_reason', 'created_at'],
+    bookings: ['id', 'booking_reference', 'requester_name', 'requester_phone', 'requester_position', 'department_id', 'objective', 'destination', 'passenger_count', 'passenger_details', 'start_date_time', 'end_date_time', 'requested_vehicle_type', 'status', 'approver_id', 'approved_at', 'rejection_reason', 'document_url', 'created_at'],
     booking_assignments: ['id', 'booking_id', 'vehicle_id', 'driver_id', 'assigned_by', 'assigned_at'],
     post_trip_logs: ['id', 'booking_assignment_id', 'start_mileage', 'end_mileage', 'distance_travelled', 'fuel_liters', 'fuel_cost', 'maintenance_cost', 'incident_reports', 'satisfaction_score', 'satisfaction_feedback', 'logger_id', 'logged_at'],
     maintenance_logs: ['id', 'vehicle_id', 'maintenance_date', 'type', 'cost', 'details', 'current_mileage', 'created_at']
