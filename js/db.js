@@ -807,6 +807,71 @@ const db = {
             };
         }).filter(Boolean);
 
+        // 1. Daily usage trend (last 30 days)
+        const dailyStats = [];
+        for (let i = 29; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            
+            const bookingsOnDay = bookings.filter(b => {
+                if (!['completed', 'approved'].includes(b.status)) return false;
+                return b.start_date_time.split('T')[0] === dateStr;
+            });
+            
+            let distanceOnDay = 0;
+            bookingsOnDay.forEach(b => {
+                const bookingAssignment = assignments.find(a => parseInt(a.booking_id) === parseInt(b.id));
+                if (bookingAssignment) {
+                    const log = logs.find(l => parseInt(l.booking_assignment_id) === parseInt(bookingAssignment.id));
+                    if (log) {
+                        distanceOnDay += parseFloat(log.distance_travelled) || 0;
+                    }
+                }
+            });
+            
+            const dayNum = d.getDate();
+            const thaiMonthsShort = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+            const dateLabel = `${dayNum} ${thaiMonthsShort[d.getMonth()]}`;
+            
+            dailyStats.push({
+                date: dateStr,
+                label: dateLabel,
+                trips: bookingsOnDay.length,
+                distance: distanceOnDay
+            });
+        }
+
+        // 2. Monthly usage trend (last 6 months)
+        const monthlyStats = [];
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const year = d.getFullYear();
+            const month = d.getMonth();
+            const yearMonthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+            
+            const bookingsInMonth = bookings.filter(b => b.start_date_time.startsWith(yearMonthStr));
+            
+            const pendingCount = bookingsInMonth.filter(b => b.status === 'pending').length;
+            const approvedCount = bookingsInMonth.filter(b => b.status === 'approved').length;
+            const completedCount = bookingsInMonth.filter(b => b.status === 'completed').length;
+            const rejectedCount = bookingsInMonth.filter(b => b.status === 'rejected' || b.status === 'cancelled').length;
+            
+            const thaiMonthsFull = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const monthLabel = `${thaiMonthsFull[month]} ${year + 543}`;
+            
+            monthlyStats.push({
+                month: yearMonthStr,
+                label: monthLabel,
+                pending: pendingCount,
+                approved: approvedCount,
+                completed: completedCount,
+                rejected: rejectedCount,
+                total: bookingsInMonth.length
+            });
+        }
+
         return {
             totalDistance,
             totalFuelLiters,
@@ -818,7 +883,9 @@ const db = {
             averageFuelEfficiency,
             averageCostPerKm,
             deptStats: Object.values(deptStats).filter(d => d.bookingCount > 0),
-            vehicleStats
+            vehicleStats,
+            dailyStats,
+            monthlyStats
         };
     }
 };

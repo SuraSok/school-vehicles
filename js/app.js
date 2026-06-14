@@ -153,8 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Executive Dashboard is only for Admin, Approver, Executive
-                if (viewId === 'bi-dashboard-view' && !['admin', 'executive', 'approver'].includes(appState.currentUser.role)) {
+                // Executive Dashboard is only for Admin, Approver, Executive, Superadmin
+                if (viewId === 'bi-dashboard-view' && !['admin', 'executive', 'approver', 'superadmin'].includes(appState.currentUser.role)) {
                     alert('ท่านไม่มีสิทธิ์การเข้าใช้งานในระบบแดชบอร์ดบริหาร');
                     return;
                 }
@@ -1736,16 +1736,300 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function renderBIDashboard() {
-        // Disabled per user request
+    // Refresh button listener
+    const btnBiRefresh = document.getElementById('btn-bi-refresh');
+    if (btnBiRefresh) {
+        btnBiRefresh.addEventListener('click', async () => {
+            btnBiRefresh.disabled = true;
+            const originalHTML = btnBiRefresh.innerHTML;
+            btnBiRefresh.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังรีเฟรช...';
+            await initDBSync();
+            renderBIDashboard();
+            btnBiRefresh.disabled = false;
+            btnBiRefresh.innerHTML = originalHTML;
+        });
     }
 
-    function renderBICharts() {
-        // Disabled per user request
+    // Sync listener to auto-refresh BI Dashboard
+    window.addEventListener('db-synced', () => {
+        if (appState.currentView === 'bi-dashboard-view') {
+            renderBIDashboard();
+        }
+    });
+
+    function renderBIDashboard() {
+        const stats = db.getBIStatistics();
+        
+        // 1. Update KPIs
+        const tripsCount = stats.vehicleStats.reduce((sum, v) => sum + v.trip_count, 0);
+        const kpiTrips = document.getElementById('bi-kpi-trips');
+        const kpiDistance = document.getElementById('bi-kpi-distance');
+        const kpiExpenses = document.getElementById('bi-kpi-expenses');
+        const kpiSatisfaction = document.getElementById('bi-kpi-satisfaction');
+
+        if (kpiTrips) kpiTrips.textContent = tripsCount;
+        if (kpiDistance) kpiDistance.textContent = Math.round(stats.totalDistance).toLocaleString();
+        if (kpiExpenses) kpiExpenses.textContent = Math.round(stats.totalExpenses).toLocaleString();
+        if (kpiSatisfaction) kpiSatisfaction.textContent = stats.averageSatisfaction;
+
+        // 2. Render Tables
+        renderBIReportsTable(stats);
+
+        // 3. Render Charts
+        renderBICharts(stats);
+    }
+
+    function renderBICharts(stats) {
+        const isDark = document.body.classList.contains('dark-theme');
+        const textColor = isDark ? '#9ca3af' : '#4b5563';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+        const primaryColor = '#15803d'; // Forest Green
+        const accentColor = '#facc15';  // Yellow Gold
+
+        // Chart 1: Daily Usage
+        const ctxDaily = document.getElementById('chart-daily-usage');
+        if (ctxDaily && stats.dailyStats) {
+            if (appState.charts.daily) appState.charts.daily.destroy();
+            appState.charts.daily = new Chart(ctxDaily, {
+                type: 'line',
+                data: {
+                    labels: stats.dailyStats.map(d => d.label),
+                    datasets: [
+                        {
+                            label: 'จำนวนทริป (ครั้ง)',
+                            data: stats.dailyStats.map(d => d.trips),
+                            borderColor: primaryColor,
+                            backgroundColor: 'rgba(21, 128, 61, 0.1)',
+                            yAxisID: 'yTrips',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'ระยะทางวิ่ง (กม.)',
+                            data: stats.dailyStats.map(d => d.distance),
+                            borderColor: '#0284c7',
+                            backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                            yAxisID: 'yDist',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { family: 'Sarabun' } } }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'Sarabun', size: 9 } }
+                        },
+                        yTrips: {
+                            type: 'linear',
+                            position: 'left',
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'Sarabun' } },
+                            title: { display: true, text: 'จำนวนครั้ง (ครั้ง)', color: textColor }
+                        },
+                        yDist: {
+                            type: 'linear',
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: textColor, font: { family: 'Sarabun' } },
+                            title: { display: true, text: 'ระยะทาง (กม.)', color: textColor }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart 2: Monthly Usage (Stacked Bar)
+        const ctxMonthly = document.getElementById('chart-monthly-usage');
+        if (ctxMonthly && stats.monthlyStats) {
+            if (appState.charts.monthly) appState.charts.monthly.destroy();
+            appState.charts.monthly = new Chart(ctxMonthly, {
+                type: 'bar',
+                data: {
+                    labels: stats.monthlyStats.map(m => m.label),
+                    datasets: [
+                        {
+                            label: 'เสร็จสิ้นภารกิจ',
+                            data: stats.monthlyStats.map(m => m.completed),
+                            backgroundColor: '#0284c7',
+                        },
+                        {
+                            label: 'อนุมัติ/กำลังเดินรถ',
+                            data: stats.monthlyStats.map(m => m.approved),
+                            backgroundColor: '#16a34a',
+                        },
+                        {
+                            label: 'รออนุมัติ',
+                            data: stats.monthlyStats.map(m => m.pending),
+                            backgroundColor: '#d97706',
+                        },
+                        {
+                            label: 'ไม่อนุมัติ/ยกเลิก',
+                            data: stats.monthlyStats.map(m => m.rejected),
+                            backgroundColor: '#dc2626',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { family: 'Sarabun' } } }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'Sarabun' } }
+                        },
+                        y: {
+                            stacked: true,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'Sarabun' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart 3: Vehicle Distance & Usage
+        const ctxVehicle = document.getElementById('chart-vehicle-distance');
+        if (ctxVehicle) {
+            if (appState.charts.vehicle) appState.charts.vehicle.destroy();
+            appState.charts.vehicle = new Chart(ctxVehicle, {
+                type: 'bar',
+                data: {
+                    labels: stats.vehicleStats.map(v => `${v.brand_model} (${v.license_plate.split(' ')[0]})`),
+                    datasets: [
+                        {
+                            label: 'ระยะทางวิ่งสะสม (กม.)',
+                            data: stats.vehicleStats.map(v => v.distance),
+                            backgroundColor: 'rgba(21, 128, 61, 0.85)',
+                            yAxisID: 'yD',
+                        },
+                        {
+                            label: 'จำนวนทริปที่วิ่ง (ครั้ง)',
+                            data: stats.vehicleStats.map(v => v.trip_count),
+                            backgroundColor: 'rgba(250, 204, 21, 0.85)',
+                            yAxisID: 'yT',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { family: 'Sarabun' } } }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'Sarabun', size: 9 } }
+                        },
+                        yD: {
+                            type: 'linear',
+                            position: 'left',
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'Sarabun' } },
+                            title: { display: true, text: 'ระยะทาง (กม.)', color: textColor }
+                        },
+                        yT: {
+                            type: 'linear',
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: textColor, font: { family: 'Sarabun' } },
+                            title: { display: true, text: 'จำนวนครั้ง (ครั้ง)', color: textColor }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Chart 4: Department Share
+        const ctxDept = document.getElementById('chart-department-share');
+        if (ctxDept && stats.deptStats) {
+            if (appState.charts.dept) appState.charts.dept.destroy();
+            const deptColors = [
+                '#15803d', '#facc15', '#0284c7', '#d97706', '#dc2626',
+                '#8b5cf6', '#ec4899', '#10b981', '#3b82f6', '#f97316',
+                '#a855f7', '#6b7280'
+            ];
+            appState.charts.dept = new Chart(ctxDept, {
+                type: 'doughnut',
+                data: {
+                    labels: stats.deptStats.map(d => d.name),
+                    datasets: [
+                        {
+                            data: stats.deptStats.map(d => d.bookingCount),
+                            backgroundColor: deptColors.slice(0, stats.deptStats.length),
+                            borderWidth: isDark ? 2 : 1,
+                            borderColor: isDark ? '#142319' : '#ffffff'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: textColor, font: { family: 'Sarabun', size: 9 } }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     function renderBIReportsTable(stats) {
-        // Disabled per user request
+        const vTableBody = document.getElementById('bi-vehicles-table-body');
+        if (vTableBody) {
+            vTableBody.innerHTML = '';
+            if (stats.vehicleStats.length === 0) {
+                vTableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:var(--text-muted);">ไม่มีข้อมูลสถิติรถยนต์</td></tr>';
+            } else {
+                stats.vehicleStats.forEach(v => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600;">${v.brand_model}<br><small style="color:var(--text-muted); font-weight:normal;">${v.license_plate}</small></td>
+                        <td>${v.type_display}</td>
+                        <td style="text-align:right; font-weight:600;">${v.trip_count}</td>
+                        <td style="text-align:right;">${v.distance.toLocaleString()} กม.</td>
+                        <td style="text-align:right;">${Math.round(v.fuel_cost).toLocaleString()} ฿</td>
+                        <td style="text-align:right;">${Math.round(v.maintenance_cost).toLocaleString()} ฿</td>
+                        <td style="text-align:right; font-weight:600; color:var(--primary);">${Math.round(v.total_cost).toLocaleString()} ฿</td>
+                        <td style="text-align:right; color:var(--color-completed); font-weight:500;">${v.fuel_efficiency} กม./ลิตร</td>
+                        <td style="text-align:right;">${v.cost_per_km} ฿/กม.</td>
+                    `;
+                    vTableBody.appendChild(tr);
+                });
+            }
+        }
+
+        const dTableBody = document.getElementById('bi-departments-table-body');
+        if (dTableBody) {
+            dTableBody.innerHTML = '';
+            if (stats.deptStats.length === 0) {
+                dTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">ไม่มีข้อมูลสถิติรายแผนก</td></tr>';
+            } else {
+                stats.deptStats.forEach(d => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600;">${d.name}</td>
+                        <td style="text-align:right; font-weight:600;">${d.bookingCount} ครั้ง</td>
+                        <td style="text-align:right;">${d.distance.toLocaleString()} กม.</td>
+                        <td style="text-align:right; font-weight:600; color:var(--primary);">${Math.round(d.cost).toLocaleString()} ฿</td>
+                    `;
+                    dTableBody.appendChild(tr);
+                });
+            }
+        }
     }
 
     // --- 7. Calendar View Module ---
