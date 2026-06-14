@@ -1,8 +1,8 @@
 // Application Logic and SPA Routing Controller - VK School Vehicle Booking System
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Mock Database
-    initializeMockDatabase();
+    // Initialize Local Cache Database
+    initializeLocalDatabase();
     
     // Core Application State
     const appState = {
