@@ -11,7 +11,7 @@ const tableMap = {
 
 const schemaColumns = {
     departments: ['id', 'name', 'created_at'],
-    users: ['id', 'username', 'password_hash', 'email', 'full_name', 'role', 'department_id', 'phone', 'status', 'created_at'],
+    users: ['id', 'username', 'password', 'email', 'full_name', 'role', 'department_id', 'phone', 'status', 'created_at'],
     vehicles: ['id', 'license_plate', 'brand', 'model', 'type', 'capacity', 'status', 'current_mileage', 'standard_fuel_consumption', 'purchase_date', 'purchase_cost', 'created_at'],
     drivers: ['id', 'user_id', 'full_name', 'license_number', 'phone', 'status', 'created_at'],
     bookings: ['id', 'booking_reference', 'requester_name', 'requester_phone', 'requester_position', 'department_id', 'objective', 'destination', 'passenger_count', 'passenger_details', 'start_date_time', 'end_date_time', 'requested_vehicle_type', 'status', 'approver_id', 'approved_at', 'rejection_reason', 'created_at'],

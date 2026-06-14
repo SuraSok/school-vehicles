@@ -1,5 +1,5 @@
-// Mock Database Layer for VK School Vehicle Booking System
-// Stored in localStorage for persistent client-side data
+// Database Sync Layer for VK School Vehicle Booking System
+// Connects with Cloudflare D1 database and keeps local state in localStorage
 
 const DB_KEYS = {
     DEPARTMENTS: 'school_vehicle_departments',
@@ -13,7 +13,7 @@ const DB_KEYS = {
 };
 
 // Seed initial data if not present
-function initializeMockDatabase() {
+function initializeLocalDatabase() {
     // Force clean old cache if departments are incorrect or deprecated
     const currentDepts = JSON.parse(localStorage.getItem(DB_KEYS.DEPARTMENTS)) || [];
     const currentVehicles = JSON.parse(localStorage.getItem(DB_KEYS.VEHICLES)) || [];
@@ -824,4 +824,4 @@ const db = {
 };
 
 // Initialize DB immediately
-initializeMockDatabase();
+initializeLocalDatabase();

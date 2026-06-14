@@ -12,10 +12,10 @@ CREATE TABLE IF NOT EXISTS departments (
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
+    password TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     full_name TEXT NOT NULL,
-    role TEXT CHECK(role IN ('approver', 'driver', 'admin', 'executive')) NOT NULL,
+    role TEXT CHECK(role IN ('approver', 'driver', 'admin', 'executive', 'superadmin')) NOT NULL,
     department_id INTEGER,
     phone TEXT,
     status TEXT CHECK(status IN ('active', 'inactive')) DEFAULT 'active',
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     passenger_details TEXT, -- รายชื่อคนเดินทาง (เก็บเป็น JSON หรือ TEXT รายบรรทัด)
     start_date_time DATETIME NOT NULL, -- วันเวลาเริ่มเดินทาง
     end_date_time DATETIME NOT NULL, -- วันเวลากลับ
-    requested_vehicle_type TEXT CHECK(requested_vehicle_type IN ('new_van', 'old_van', 'six_wheeler_truck')) NOT NULL,
+    requested_vehicle_type TEXT CHECK(requested_vehicle_type IN ('new_van', 'old_van', 'six_wheeler_truck', 'other')) NOT NULL,
     status TEXT CHECK(status IN ('pending', 'approved', 'rejected', 'cancelled', 'completed')) DEFAULT 'pending',
     approver_id INTEGER, -- ผู้พิจารณาคำขอ
     approved_at DATETIME,
