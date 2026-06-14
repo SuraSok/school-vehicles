@@ -4,4 +4,4 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "school_vehicles_db"
-database_id = "YOUR_DATABASE_ID_HERE"
+database_id = "e105939e-cec8-4be5-aa39-26fcf5c40b63"
