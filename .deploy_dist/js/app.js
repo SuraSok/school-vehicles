@@ -460,8 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             start_date_time: startDateTimeStr,
             end_date_time: endDateTimeStr,
             requested_vehicle_type: requestedVehicleVal,
-            document_url: document.getElementById('booking-doc-url').value.trim(),
-            gps_distance: document.getElementById('booking-gps-distance').value.trim()
+            document_url: document.getElementById('booking-doc-url').value.trim()
         };
 
         const newBooking = db.createBooking(formData);
@@ -668,7 +667,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tr><td style="font-weight: bold;">การติดต่อ</td><td>โทร. ${booking.requester_phone} | ตำแหน่ง: ${booking.requester_position || 'ไม่ระบุ'}</td></tr>
                 <tr><td style="font-weight: bold;">วัตถุประสงค์</td><td>${booking.objective}</td></tr>
                 <tr><td style="font-weight: bold;">สถานที่ปลายทาง</td><td>${booking.destination}</td></tr>
-                <tr><td style="font-weight: bold;">ระยะทางตาม GPS</td><td>${booking.gps_distance ? `${booking.gps_distance} กม.` : '<span style="color: var(--text-muted);">ไม่ได้ระบุ</span>'}</td></tr>
                 <tr><td style="font-weight: bold;">จำนวนผู้เดินทาง</td><td>${booking.passenger_count} คน</td></tr>
                 <tr><td style="font-weight: bold;">รายชื่อผู้เดินทาง</td><td><pre style="font-family: inherit; font-size: 13px; background: rgba(0,0,0,0.02); padding: 10px; border-radius: 4px; white-space: pre-wrap;">${booking.passenger_details || 'ไม่มี'}</pre></td></tr>
                 <tr><td style="font-weight: bold;">เวลาไป-กลับ</td><td>เริ่ม: ${start} น.<br>ถึง: ${end} น.</td></tr>

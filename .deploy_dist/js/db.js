@@ -377,7 +377,6 @@ const db = {
             approved_at: null,
             rejection_reason: null,
             document_url: bookingData.document_url || null,
-            gps_distance: bookingData.gps_distance ? parseFloat(bookingData.gps_distance) : null,
             created_at: new Date().toISOString()
         };
         
