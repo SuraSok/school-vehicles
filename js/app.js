@@ -2461,6 +2461,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const booking = db.getBookings().find(b => parseInt(b.id) === parseInt(bookingId));
         if (!booking) return;
 
+        const pmBookingRef = document.getElementById('pm-booking-ref');
+        const pmRequester = document.getElementById('pm-requester');
+        const pmStartTime = document.getElementById('pm-start-time');
+        const pmEndTime = document.getElementById('pm-end-time');
+        const pmVehicle = document.getElementById('pm-vehicle');
+        const pmDestination = document.getElementById('pm-destination');
+        const pmObjective = document.getElementById('pm-objective');
+        const modalTableBody = document.getElementById('passenger-list-table-body');
+        const btnDownload = document.getElementById('btn-download-passengers-pdf');
+        const pm = document.getElementById('passenger-modal');
+
+        // Check if modal element exists in the DOM first (safeguard against browser cache)
+        if (!pm) {
+            console.error('passenger-modal element not found in DOM.');
+            alert('บราวเซอร์ของคุณกำลังใช้งานหน้าเว็บเวอร์ชันเก่า (แคชเก่า) กรุณากดปุ่ม Refresh หรือ Ctrl + F5 เพื่อโหลดหน้าเว็บเวอร์ชันล่าสุด');
+            return;
+        }
+
         const depts = db.getDepartments();
         const drivers = db.getDrivers();
         const vehicles = db.getVehicles();
@@ -2477,49 +2495,48 @@ document.addEventListener('DOMContentLoaded', () => {
         const start = new Date(booking.start_date_time).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
         const end = new Date(booking.end_date_time).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
 
-        // Set text content in modal
-        document.getElementById('pm-booking-ref').textContent = booking.booking_reference;
-        document.getElementById('pm-requester').textContent = `${booking.requester_name} (${deptName})`;
-        document.getElementById('pm-start-time').textContent = `${start} น.`;
-        document.getElementById('pm-end-time').textContent = `${end} น.`;
-        document.getElementById('pm-vehicle').textContent = vehicleInfo;
-        document.getElementById('pm-destination').textContent = booking.destination;
-        document.getElementById('pm-objective').textContent = booking.objective;
+        // Set text content safely
+        if (pmBookingRef) pmBookingRef.textContent = booking.booking_reference;
+        if (pmRequester) pmRequester.textContent = `${booking.requester_name} (${deptName})`;
+        if (pmStartTime) pmStartTime.textContent = `${start} น.`;
+        if (pmEndTime) pmEndTime.textContent = `${end} น.`;
+        if (pmVehicle) pmVehicle.textContent = vehicleInfo;
+        if (pmDestination) pmDestination.textContent = booking.destination;
+        if (pmObjective) pmObjective.textContent = booking.objective;
 
         // Parse passenger list
-        const modalTableBody = document.getElementById('passenger-list-table-body');
-        modalTableBody.innerHTML = '';
-        
-        const rawPassengers = booking.passenger_details || '';
-        const passengers = rawPassengers.split(/[\n,;/]|\s*และ\s*|\s*\d+[\.\)]\s*/)
-            .map(line => line.trim())
-            .filter(line => line.length > 0 && !line.includes('รวมนักเรียน') && !line.includes('ครูผู้ควบคุม'))
-            .map(line => {
-                return line.replace(/^\d+[\.\)\s-]*|^[-\*\u2022]\s*/, '').trim();
-            })
-            .filter(name => name.length > 0);
+        if (modalTableBody) {
+            modalTableBody.innerHTML = '';
+            const rawPassengers = booking.passenger_details || '';
+            const passengers = rawPassengers.split(/[\n,;/]|\s*และ\s*|\s*\d+[\.\)]\s*/)
+                .map(line => line.trim())
+                .filter(line => line.length > 0 && !line.includes('รวมนักเรียน') && !line.includes('ครูผู้ควบคุม'))
+                .map(line => {
+                    return line.replace(/^\d+[\.\)\s-]*|^[-\*\u2022]\s*/, '').trim();
+                })
+                .filter(name => name.length > 0);
 
-        if (passengers.length === 0) {
-            modalTableBody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted);">ไม่มีข้อมูลรายชื่อผู้เดินทาง</td></tr>';
-        } else {
-            passengers.forEach((p, idx) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="text-align: center; font-weight: bold;">${idx + 1}</td>
-                    <td>${p}</td>
-                `;
-                modalTableBody.appendChild(tr);
-            });
+            if (passengers.length === 0) {
+                modalTableBody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted);">ไม่มีข้อมูลรายชื่อผู้เดินทาง</td></tr>';
+            } else {
+                passengers.forEach((p, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="text-align: center; font-weight: bold;">${idx + 1}</td>
+                        <td>${p}</td>
+                    `;
+                    modalTableBody.appendChild(tr);
+                });
+            }
         }
 
-        // Set dataset on download PDF button
-        document.getElementById('btn-download-passengers-pdf').setAttribute('data-booking-id', booking.id);
+        // Set dataset on download PDF button safely
+        if (btnDownload) {
+            btnDownload.setAttribute('data-booking-id', booking.id);
+        }
 
         // Open modal
-        const pm = document.getElementById('passenger-modal');
-        if (pm) {
-            pm.classList.add('active');
-        }
+        pm.classList.add('active');
     }
 
     // Bind passenger modal close events
