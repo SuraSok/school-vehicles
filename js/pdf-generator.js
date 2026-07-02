@@ -450,9 +450,9 @@ const pdfGenerator = {
 
         // Parse passengers list
         const rawPassengers = booking.passenger_details || '';
-        const passengers = rawPassengers.split('\n')
+        const passengers = rawPassengers.split(/[\n,;/]|\s*และ\s*|\s*\d+[\.\)]\s*/)
             .map(line => line.trim())
-            .filter(line => line.length > 0)
+            .filter(line => line.length > 0 && !line.includes('รวมนักเรียน') && !line.includes('ครูผู้ควบคุม'))
             .map(line => {
                 // Remove numbering prefixes
                 return line.replace(/^\d+[\.\)\s-]*|^[-\*\u2022]\s*/, '').trim();

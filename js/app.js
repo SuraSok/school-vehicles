@@ -2301,15 +2301,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const vehicleInfo = v ? `<strong>${typeDisp}</strong><br><small style="color:var(--text-muted);">${v.license_plate}</small>` : '-';
 
                 const rawDetails = b.passenger_details || '';
-                const passengerLines = rawDetails.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                const hasManyPassengers = passengerLines.length > 2 || (parseInt(b.passenger_count) > 2);
+                
+                // Estimate passenger count robustly (by newline, comma, slash, semicolon, 'และ', or numbers)
+                const items = rawDetails.split(/[\n,;/]|\s*และ\s*|\s*\d+[\.\)]\s*/)
+                    .map(l => l.trim())
+                    .filter(l => l.length > 0 && !l.includes('รวมนักเรียน') && !l.includes('ครูผู้ควบคุม'));
+                const countMatch = rawDetails.match(/(\d+)\s*(?:คน|ท่าน)/);
+                const parsedCount = countMatch ? parseInt(countMatch[1]) : 0;
+                const estimatedCount = Math.max(items.length, parsedCount, parseInt(b.passenger_count) || 0);
+
+                const hasManyPassengers = estimatedCount > 2;
                 
                 let passengerCellHTML = '';
                 if (hasManyPassengers) {
                     passengerCellHTML = `
                         <div style="text-align: center;">
                             <button type="button" class="btn btn-primary btn-sm view-passengers-btn" data-booking-id="${b.id}" style="padding: 4px 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; border-radius: 4px; cursor: pointer;">
-                                <i class="fas fa-users"></i> ดูรายชื่อ (${passengerLines.length || b.passenger_count} คน)
+                                <i class="fas fa-users"></i> ดูรายชื่อ (${estimatedCount} คน)
                             </button>
                         </div>
                     `;
@@ -2477,9 +2485,9 @@ document.addEventListener('DOMContentLoaded', () => {
         modalTableBody.innerHTML = '';
         
         const rawPassengers = booking.passenger_details || '';
-        const passengers = rawPassengers.split('\n')
+        const passengers = rawPassengers.split(/[\n,;/]|\s*และ\s*|\s*\d+[\.\)]\s*/)
             .map(line => line.trim())
-            .filter(line => line.length > 0)
+            .filter(line => line.length > 0 && !line.includes('รวมนักเรียน') && !line.includes('ครูผู้ควบคุม'))
             .map(line => {
                 return line.replace(/^\d+[\.\)\s-]*|^[-\*\u2022]\s*/, '').trim();
             })
