@@ -465,8 +465,8 @@ const pdfGenerator = {
         element.style.fontFamily = "'TH Sarabun PSK', 'THSarabunNew', 'Sarabun', sans-serif";
         element.style.color = '#000';
         element.style.backgroundColor = '#fff';
-        element.style.fontSize = '15px';
-        element.style.lineHeight = '2.0';
+        element.style.fontSize = '13px';
+        element.style.lineHeight = '1.5';
         element.style.width = '700px';
         element.style.boxSizing = 'border-box';
 
@@ -474,35 +474,35 @@ const pdfGenerator = {
             <style>
                 .pl-header {
                     text-align: center;
-                    margin-bottom: 20px;
+                    margin-bottom: 10px;
                 }
                 .pl-title {
-                    font-size: 20px;
+                    font-size: 17px;
                     font-weight: bold;
                     margin: 0;
-                    line-height: 1.4;
+                    line-height: 1.3;
                 }
                 .pl-subtitle {
-                    font-size: 16px;
+                    font-size: 13.5px;
                     font-weight: bold;
-                    margin: 0 0 10px 0;
+                    margin: 0 0 5px 0;
                 }
                 .pl-details-box {
                     border: 1px solid #ccc;
-                    padding: 15px;
-                    border-radius: 6px;
-                    margin-bottom: 20px;
-                    line-height: 1.8;
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    margin-bottom: 12px;
+                    line-height: 1.4;
                 }
                 .pl-table {
                     width: 100%;
                     border-collapse: collapse;
-                    margin-bottom: 30px;
+                    margin-bottom: 15px;
                 }
                 .pl-table th, .pl-table td {
                     border: 1px solid #000;
-                    padding: 6px 10px;
-                    font-size: 15px;
+                    padding: 4px 8px;
+                    font-size: 12.5px;
                 }
                 .pl-table th {
                     background-color: #f2f2f2;
@@ -515,12 +515,13 @@ const pdfGenerator = {
                 .pl-sign-container {
                     display: flex;
                     justify-content: flex-end;
-                    margin-top: 40px;
+                    margin-top: 15px;
                 }
                 .pl-sign-box {
                     text-align: center;
                     width: 280px;
-                    line-height: 1.6;
+                    line-height: 1.4;
+                    font-size: 13px;
                 }
             </style>
             
