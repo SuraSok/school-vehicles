@@ -323,16 +323,45 @@ if (typeof window !== 'undefined') {
     });
 }
 
+// Helper to normalize Buddhist Era (BE) year to Gregorian year if present
+function normalizeThaiYear(str) {
+    if (!str) return str;
+    const m = String(str).match(/^(\d{4})-(.*)$/);
+    if (m) {
+        let y = parseInt(m[1]);
+        if (y > 2400) {
+            y -= 543;
+            return `${y}-${m[2]}`;
+        }
+    }
+    return str;
+}
+
 // Data helper functions
 const db = {
     getItems: (key) => JSON.parse(localStorage.getItem(key)) || [],
     saveItems: (key, items) => {
-        localStorage.setItem(key, JSON.stringify(items));
-        syncTableToServer(key, items);
+        let processedItems = items;
+        if (key === DB_KEYS.BOOKINGS) {
+            processedItems = items.map(b => {
+                b.start_date_time = normalizeThaiYear(b.start_date_time);
+                b.end_date_time = normalizeThaiYear(b.end_date_time);
+                return b;
+            });
+        }
+        localStorage.setItem(key, JSON.stringify(processedItems));
+        syncTableToServer(key, processedItems);
     },
 
     // Bookings CRUD
-    getBookings: () => db.getItems(DB_KEYS.BOOKINGS),
+    getBookings: () => {
+        const items = db.getItems(DB_KEYS.BOOKINGS);
+        return items.map(b => {
+            b.start_date_time = normalizeThaiYear(b.start_date_time);
+            b.end_date_time = normalizeThaiYear(b.end_date_time);
+            return b;
+        });
+    },
     getBookingById: (id) => db.getBookings().find(b => b.id === parseInt(id)),
     getBookingByReference: (ref) => db.getBookings().find(b => b.booking_reference.toUpperCase() === ref.toUpperCase().trim()),
     
