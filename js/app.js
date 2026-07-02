@@ -2243,6 +2243,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Admin, Approver, Executive, Guest view: show selector
             selectorContainer.style.display = 'flex';
             
+            // Preserve previous selection if exists
+            const previousValue = driverSelect.value || 'all';
+
             // Populate select dropdown
             driverSelect.innerHTML = '<option value="all">-- แสดงคนขับรถทั้งหมด --</option>';
             drivers.forEach(d => {
@@ -2253,12 +2256,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Restore selection or default to all
-            driverSelect.value = 'all';
+            if (drivers.some(d => parseInt(d.id) === parseInt(previousValue))) {
+                driverSelect.value = previousValue;
+            } else {
+                driverSelect.value = 'all';
+            }
             
             // Bind selector change
             driverSelect.onchange = () => {
                 const selectedVal = driverSelect.value;
-                const selectedDriver = drivers.find(d => d.id === parseInt(selectedVal));
+                const selectedDriver = drivers.find(d => parseInt(d.id) === parseInt(selectedVal));
                 const labelText = selectedVal === 'all' 
                     ? 'ตารางงานของ: พนักงานขับรถทั้งหมด' 
                     : `ตารางงานของ: ${selectedDriver ? selectedDriver.full_name : ''} (โทร: ${selectedDriver ? selectedDriver.phone : ''})`;
@@ -2269,8 +2276,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 populateScheduleTable(data);
             };
 
-            nameHeaderLabel.textContent = 'ตารางงานของ: พนักงานขับรถทั้งหมด';
-            const initialData = getAssignmentsForDriver('all');
+            const initialVal = driverSelect.value;
+            const activeDriver = drivers.find(d => parseInt(d.id) === parseInt(initialVal));
+            nameHeaderLabel.textContent = initialVal === 'all'
+                ? 'ตารางงานของ: พนักงานขับรถทั้งหมด'
+                : `ตารางงานของ: ${activeDriver ? activeDriver.full_name : ''} (โทร: ${activeDriver ? activeDriver.phone : ''})`;
+            const initialData = getAssignmentsForDriver(initialVal);
             currentDisplayedScheduleData = initialData;
             populateScheduleTable(initialData);
         }

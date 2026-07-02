@@ -77,11 +77,9 @@ function initializeLocalDatabase() {
     // 3. Vehicles
     if (!localStorage.getItem(DB_KEYS.VEHICLES)) {
         const initialVehicles = [
-            { id: 1, license_plate: 'นข-9988 นครราชสีมา', brand: 'Toyota', model: 'Commuter 2024', type: 'new_van', capacity: 13, status: 'available', current_mileage: 15400, standard_fuel_consumption: 11.5, purchase_date: '2024-02-10', purchase_cost: 1350000 },
-            { id: 2, license_plate: 'นข-9999 นครราชสีมา', brand: 'Toyota', model: 'Commuter 2023', type: 'new_van', capacity: 13, status: 'available', current_mileage: 28200, standard_fuel_consumption: 11.0, purchase_date: '2023-05-15', purchase_cost: 1350000 },
-            { id: 3, license_plate: 'ฮง-1234 นครราชสีมา', brand: 'Toyota', model: 'Commuter 2015', type: 'old_van', capacity: 13, status: 'available', current_mileage: 184500, standard_fuel_consumption: 8.5, purchase_date: '2015-08-20', purchase_cost: 1100000 },
-            { id: 4, license_plate: 'ฮง-5678 นครราชสีมา', brand: 'Toyota', model: 'Commuter 2013', type: 'old_van', capacity: 13, status: 'maintenance', current_mileage: 245000, standard_fuel_consumption: 7.8, purchase_date: '2013-11-01', purchase_cost: 1100000 },
-            { id: 5, license_plate: 'สข-6666 นครราชสีมา', brand: 'Isuzu', model: 'Elf 6-Wheeler 2018', type: 'six_wheeler_truck', capacity: 24, status: 'available', current_mileage: 82100, standard_fuel_consumption: 6.2, purchase_date: '2018-04-12', purchase_cost: 1550000 },
+            { id: 2, license_plate: 'นง 7741 นครราชสีมา', brand: 'Toyota', model: 'Commuter 2023', type: 'new_van', capacity: 13, status: 'available', current_mileage: 28200, standard_fuel_consumption: 11.0, purchase_date: '2023-05-15', purchase_cost: 1350000 },
+            { id: 3, license_plate: 'นง 521 นครราชสีมา', brand: 'Toyota', model: 'Commuter 2015', type: 'old_van', capacity: 13, status: 'available', current_mileage: 184500, standard_fuel_consumption: 8.5, purchase_date: '2015-08-20', purchase_cost: 1100000 },
+            { id: 5, license_plate: '40-0349 นครราชสีมา', brand: 'Isuzu', model: 'Elf 6-Wheeler 2018', type: 'six_wheeler_truck', capacity: 24, status: 'available', current_mileage: 82100, standard_fuel_consumption: 6.2, purchase_date: '2018-04-12', purchase_cost: 1550000 },
             { id: 6, license_plate: 'จ้างเหมาบริการภายนอก', brand: 'รถบัส/รถตู้', model: 'จ้างเหมา', type: 'other', capacity: 50, status: 'available', current_mileage: 0, standard_fuel_consumption: 10.0, purchase_date: '2026-01-01', purchase_cost: 0 }
         ];
         localStorage.setItem(DB_KEYS.VEHICLES, JSON.stringify(initialVehicles));
@@ -90,8 +88,8 @@ function initializeLocalDatabase() {
     // 4. Drivers
     if (!localStorage.getItem(DB_KEYS.DRIVERS)) {
         const initialDrivers = [
-            { id: 1, user_id: 3, full_name: 'นายสมชาย ใจดี', license_number: 'ท.2-00123/60', phone: '083-333-4444', status: 'available' },
-            { id: 2, user_id: 4, full_name: 'นายสมศักดิ์ รักดี', license_number: 'ท.2-00567/62', phone: '084-444-5555', status: 'available' },
+            { id: 1, user_id: 3, full_name: 'นายหนึ่ง  เชื้อสมุทร', license_number: 'ท.2-00123/60', phone: '083-333-4444', status: 'available' },
+            { id: 2, user_id: 4, full_name: 'นายวัชระ  พานวงศ์', license_number: 'ท.2-00567/62', phone: '084-444-5555', status: 'available' },
             { id: 3, user_id: null, full_name: 'นายอุดม พากเพียร', license_number: 'ท.3-00999/58', phone: '089-999-8888', status: 'available' },
             { id: 4, user_id: null, full_name: 'คนขับรถจ้างเหมาบริการภายนอก/พนักงานขับภายนอก', license_number: 'ทั่วไป', phone: '-', status: 'available' }
         ];
