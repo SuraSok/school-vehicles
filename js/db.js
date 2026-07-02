@@ -26,8 +26,8 @@ function initializeLocalDatabase() {
     const needsMigration = currentDepts.length === 0 || 
                           currentDepts.length !== 12 || 
                           currentDepts.some(d => d.name.includes('กลุ่มสาระการเรียนรู้')) ||
-                          currentVehicles.length < 6 ||
-                          currentDrivers.length < 4 ||
+                          currentVehicles.length < 4 ||
+                          currentDrivers.length < 3 ||
                           !hasHeaderUser ||
                           !adminIsSuper;
                           

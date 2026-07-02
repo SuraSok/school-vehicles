@@ -826,16 +826,29 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
 
                     // Generate drivers selection
+                    const seenPendingDriverIds = new Set();
+                    const uniquePendingDrivers = [];
+                    drivers.forEach(d => {
+                        if (d && d.id) {
+                            const normName = d.full_name.trim().replace(/\s+/g, ' ');
+                            const key = `${d.id}_${normName}`;
+                            if (!seenPendingDriverIds.has(key)) {
+                                seenPendingDriverIds.add(key);
+                                uniquePendingDrivers.push(d);
+                            }
+                        }
+                    });
+
                     let defaultDriverId = '';
-                    const availableDriver = drivers.find(d => d.status === 'available');
+                    const availableDriver = uniquePendingDrivers.find(d => d.status === 'available');
                     if (availableDriver) {
                         defaultDriverId = availableDriver.id;
-                    } else if (drivers.length > 0) {
-                        defaultDriverId = drivers[0].id;
+                    } else if (uniquePendingDrivers.length > 0) {
+                        defaultDriverId = uniquePendingDrivers[0].id;
                     }
 
                     let driverOptionsHTML = '<option value="">-- เลือกคนขับ --</option>';
-                    drivers.forEach(d => {
+                    uniquePendingDrivers.forEach(d => {
                         const statusLabel = d.status === 'available' ? 'พร้อมใช้งาน' : d.status;
                         const isSelected = d.id === defaultDriverId ? 'selected' : '';
                         driverOptionsHTML += `<option value="${d.id}" ${isSelected}>${d.full_name} (${d.phone} | ${statusLabel})</option>`;
@@ -1301,7 +1314,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Populate Drivers Select
         driverSelect.innerHTML = '<option value="">-- กรุณาเลือกคนขับ --</option>';
+        const seenDriverIds = new Set();
+        const uniqueDrivers = [];
         drivers.forEach(d => {
+            if (d && d.id) {
+                const normName = d.full_name.trim().replace(/\s+/g, ' ');
+                const key = `${d.id}_${normName}`;
+                if (!seenDriverIds.has(key)) {
+                    seenDriverIds.add(key);
+                    uniqueDrivers.push(d);
+                }
+            }
+        });
+        uniqueDrivers.forEach(d => {
             const statusLabel = d.status === 'available' ? 'พร้อมใช้งาน' : d.status;
             const opt = document.createElement('option');
             opt.value = d.id;
@@ -2248,7 +2273,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Populate select dropdown
             driverSelect.innerHTML = '<option value="all">-- แสดงคนขับรถทั้งหมด --</option>';
+            const seenScheduleDriverIds = new Set();
+            const uniqueScheduleDrivers = [];
             drivers.forEach(d => {
+                if (d && d.id) {
+                    const normName = d.full_name.trim().replace(/\s+/g, ' ');
+                    const key = `${d.id}_${normName}`;
+                    if (!seenScheduleDriverIds.has(key)) {
+                        seenScheduleDriverIds.add(key);
+                        uniqueScheduleDrivers.push(d);
+                    }
+                }
+            });
+            uniqueScheduleDrivers.forEach(d => {
                 const opt = document.createElement('option');
                 opt.value = d.id;
                 opt.textContent = `${d.full_name} (${d.phone})`;
@@ -2256,7 +2293,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Restore selection or default to all
-            if (drivers.some(d => parseInt(d.id) === parseInt(previousValue))) {
+            if (uniqueScheduleDrivers.some(d => parseInt(d.id) === parseInt(previousValue))) {
                 driverSelect.value = previousValue;
             } else {
                 driverSelect.value = 'all';
