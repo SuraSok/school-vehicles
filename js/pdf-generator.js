@@ -320,8 +320,8 @@ const pdfGenerator = {
             <div style="padding: 3px 0; margin-bottom: 5px; border-top: 1px solid #000; padding-top: 3px;">
                 <h4 style="font-size: 13.5px; font-weight: bold; margin: 0 0 2px 0;">ความคิดเห็นของหัวหน้างานยานพาหนะและบริการสาธารณะ</h4>
                 <div style="margin-bottom: 2px; font-size: 13px; line-height: 1.8;">
-                    <span>${isSchoolCar ? '(✓)' : '( &nbsp; )'}</span> มอบหมายหน้าที่ให้ &nbsp;<span class="underlined-text">&nbsp;${isSchoolCar ? driverName : '................................................'}&nbsp;</span>&nbsp; เป็นพนักงานขับรถ 
-                    และใช้รถยนต์หมายเลขทะเบียน &nbsp;<span class="underlined-text">&nbsp;${isSchoolCar ? vehicleLicense : '................................................'}&nbsp;</span>
+                    <span>${isSchoolCar ? '(✓)' : '( &nbsp; )'}</span> มอบหมายหน้าที่ให้ &nbsp;<span class="underlined-text">&nbsp;${isSchoolCar ? driverName : '................................................'}&nbsp;</span>&nbsp; เป็นพนักงานขับรถ <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; และใช้รถยนต์หมายเลขทะเบียน &nbsp;<span class="underlined-text">&nbsp;${isSchoolCar ? vehicleLicense : '................................................'}&nbsp;</span>
                 </div>
                 <div style="margin-bottom: 3px; font-size: 13px; line-height: 1.6;">
                     <span>${isHiredCar ? '(✓)' : '( &nbsp; )'}</span> รถโรงเรียนไม่ว่าง ให้ไปรถรับจ้างตามระเบียบสำนักนายกฯ
