@@ -90,7 +90,6 @@ function initializeLocalDatabase() {
         const initialDrivers = [
             { id: 1, user_id: 3, full_name: 'นายหนึ่ง  เชื้อสมุทร', license_number: 'ท.2-00123/60', phone: '083-333-4444', status: 'available' },
             { id: 2, user_id: 4, full_name: 'นายวัชระ  พานวงศ์', license_number: 'ท.2-00567/62', phone: '084-444-5555', status: 'available' },
-            { id: 3, user_id: null, full_name: 'นายอุดม พากเพียร', license_number: 'ท.3-00999/58', phone: '089-999-8888', status: 'available' },
             { id: 4, user_id: null, full_name: 'คนขับรถจ้างเหมาบริการภายนอก/พนักงานขับภายนอก', license_number: 'ทั่วไป', phone: '-', status: 'available' }
         ];
         localStorage.setItem(DB_KEYS.DRIVERS, JSON.stringify(initialDrivers));
