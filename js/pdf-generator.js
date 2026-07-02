@@ -165,7 +165,7 @@ const pdfGenerator = {
         element.style.color = '#000';
         element.style.backgroundColor = '#fff';
         element.style.fontSize = '15px';
-        element.style.lineHeight = '1.8';
+        element.style.lineHeight = '2.2';
         element.style.width = '700px'; // Standard A4 width in px for pdf rendering
         element.style.boxSizing = 'border-box';
 
@@ -194,7 +194,7 @@ const pdfGenerator = {
                 }
                 .underlined-text {
                     font-weight: bold;
-                    border-bottom: 1px dotted #000;
+                    border-bottom: 1px dotted #555;
                     padding: 0 4px 1px 4px;
                     margin: 0 2px;
                     display: inline;
@@ -204,13 +204,13 @@ const pdfGenerator = {
                     text-indent: 40px;
                     margin-bottom: 4px;
                     text-align: justify;
-                    line-height: 2.0;
+                    line-height: 2.2;
                     font-size: 15px;
                 }
                 .pdf-line {
                     margin-bottom: 4px;
                     text-align: justify;
-                    line-height: 2.0;
+                    line-height: 2.2;
                     font-size: 15px;
                 }
                 .pdf-checkboxes {
@@ -219,7 +219,7 @@ const pdfGenerator = {
                     display: flex;
                     flex-direction: column;
                     gap: 4px;
-                    line-height: 2.0;
+                    line-height: 2.2;
                     font-size: 15px;
                 }
             </style>
