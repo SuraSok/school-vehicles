@@ -2458,7 +2458,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Passenger Modal Setup ---
     function openPassengerModal(bookingId) {
-        const booking = db.getBookings().find(b => b.id === bookingId);
+        const booking = db.getBookings().find(b => parseInt(b.id) === parseInt(bookingId));
         if (!booking) return;
 
         const depts = db.getDepartments();
@@ -2466,12 +2466,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const vehicles = db.getVehicles();
         const assignments = db.getAssignments();
 
-        const dept = depts.find(d => d.id === booking.department_id);
+        const dept = depts.find(d => parseInt(d.id) === parseInt(booking.department_id));
         const deptName = dept ? dept.name : 'ทั่วไป';
         
-        const assignment = assignments.find(a => a.booking_id === booking.id);
-        const vehicle = assignment ? vehicles.find(v => v.id === assignment.vehicle_id) : null;
-        const driver = assignment ? drivers.find(d => d.id === assignment.driver_id) : null;
+        const assignment = assignments.find(a => parseInt(a.booking_id) === parseInt(booking.id));
+        const vehicle = assignment ? vehicles.find(v => parseInt(v.id) === parseInt(assignment.vehicle_id)) : null;
+        const driver = assignment ? drivers.find(d => parseInt(d.id) === parseInt(assignment.driver_id)) : null;
         
         const vehicleInfo = vehicle ? `${vehicle.brand} ${vehicle.model} (ทะเบียน: ${vehicle.license_plate})` : 'ยังไม่ได้จัดสรร';
         const start = new Date(booking.start_date_time).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
