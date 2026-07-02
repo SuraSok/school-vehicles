@@ -1754,10 +1754,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Sync listener to auto-refresh BI Dashboard
+    // Sync listener to auto-refresh active views when database completes sync from D1
     window.addEventListener('db-synced', () => {
         if (appState.currentView === 'bi-dashboard-view') {
             renderBIDashboard();
+        } else if (appState.currentView === 'driver-schedule-view') {
+            renderDriverSchedule();
+        } else if (appState.currentView === 'calendar-view') {
+            renderCalendar();
+        } else if (appState.currentView === 'admin-dashboard-view') {
+            renderAdminDashboard();
         }
     });
 
