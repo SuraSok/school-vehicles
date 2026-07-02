@@ -181,7 +181,7 @@ const pdfGenerator = {
                 .memo-logo {
                     position: absolute;
                     left: 0;
-                    top: -5px;
+                    top: 0;
                     width: 45px;
                     height: 45px;
                     object-fit: contain;
@@ -375,7 +375,7 @@ const pdfGenerator = {
 
         // Configure PDF rendering options
         const opt = {
-            margin:       [5, 12, 5, 12],
+            margin:       [15, 12, 10, 12], // 15mm top margin to shift header down, 10mm bottom, 12mm left/right
             filename:     `ใบขอใช้รถ_${booking.booking_reference}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
