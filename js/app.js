@@ -2300,6 +2300,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 const typeDisp = v ? (v.type === 'new_van' ? 'รถตู้ใหม่' : v.type === 'old_van' ? 'รถตู้เก่า' : v.type === 'six_wheeler_truck' ? 'รถหกล้อ' : 'อื่นๆ') : '';
                 const vehicleInfo = v ? `<strong>${typeDisp}</strong><br><small style="color:var(--text-muted);">${v.license_plate}</small>` : '-';
 
+                const rawDetails = b.passenger_details || '';
+                const passengerLines = rawDetails.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                const hasManyPassengers = passengerLines.length > 2 || (parseInt(b.passenger_count) > 2);
+                
+                let passengerCellHTML = '';
+                if (hasManyPassengers) {
+                    passengerCellHTML = `
+                        <div style="text-align: center;">
+                            <button type="button" class="btn btn-primary btn-sm view-passengers-btn" data-booking-id="${b.id}" style="padding: 4px 8px; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; border-radius: 4px; cursor: pointer;">
+                                <i class="fas fa-users"></i> ดูรายชื่อ (${passengerLines.length || b.passenger_count} คน)
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    passengerCellHTML = `
+                        <pre style="font-family: inherit; font-size: 12px; margin:0; white-space: pre-wrap; background: rgba(0,0,0,0.01); padding: 5px; border-radius: 4px;">${b.passenger_details || '-'}</pre>
+                    `;
+                }
+
                 tr.innerHTML = `
                     <td style="font-weight: 700;">${b.booking_reference}</td>
                     <td>${startFormatted} น.</td>
@@ -2312,11 +2331,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><strong>${b.destination}</strong></td>
                     <td style="font-size: 13px;">${b.objective}</td>
                     <td>
-                        <pre style="font-family: inherit; font-size: 12px; margin:0; white-space: pre-wrap; background: rgba(0,0,0,0.01); padding: 5px; border-radius: 4px;">${b.passenger_details || '-'}</pre>
+                        ${passengerCellHTML}
                     </td>
                     <td>${statusBadges[b.status] || b.status}</td>
                 `;
                 tableBody.appendChild(tr);
+            });
+
+            // Bind click events for passenger view buttons
+            tableBody.querySelectorAll('.view-passengers-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const bookingId = parseInt(btn.getAttribute('data-booking-id'));
+                    openPassengerModal(bookingId);
+                });
             });
         }
     }
@@ -2412,6 +2439,100 @@ document.addEventListener('DOMContentLoaded', () => {
         btnExportPDF.addEventListener('click', () => {
             const label = document.getElementById('driver-name-header-label').textContent;
             exportDriverSchedulePDF(label);
+        });
+    }
+
+    // --- Passenger Modal Setup ---
+    function openPassengerModal(bookingId) {
+        const booking = db.getBookings().find(b => b.id === bookingId);
+        if (!booking) return;
+
+        const depts = db.getDepartments();
+        const drivers = db.getDrivers();
+        const vehicles = db.getVehicles();
+        const assignments = db.getAssignments();
+
+        const dept = depts.find(d => d.id === booking.department_id);
+        const deptName = dept ? dept.name : 'ทั่วไป';
+        
+        const assignment = assignments.find(a => a.booking_id === booking.id);
+        const vehicle = assignment ? vehicles.find(v => v.id === assignment.vehicle_id) : null;
+        const driver = assignment ? drivers.find(d => d.id === assignment.driver_id) : null;
+        
+        const vehicleInfo = vehicle ? `${vehicle.brand} ${vehicle.model} (ทะเบียน: ${vehicle.license_plate})` : 'ยังไม่ได้จัดสรร';
+        const start = new Date(booking.start_date_time).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+        const end = new Date(booking.end_date_time).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+
+        // Set text content in modal
+        document.getElementById('pm-booking-ref').textContent = booking.booking_reference;
+        document.getElementById('pm-requester').textContent = `${booking.requester_name} (${deptName})`;
+        document.getElementById('pm-start-time').textContent = `${start} น.`;
+        document.getElementById('pm-end-time').textContent = `${end} น.`;
+        document.getElementById('pm-vehicle').textContent = vehicleInfo;
+        document.getElementById('pm-destination').textContent = booking.destination;
+        document.getElementById('pm-objective').textContent = booking.objective;
+
+        // Parse passenger list
+        const modalTableBody = document.getElementById('passenger-list-table-body');
+        modalTableBody.innerHTML = '';
+        
+        const rawPassengers = booking.passenger_details || '';
+        const passengers = rawPassengers.split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => {
+                return line.replace(/^\d+[\.\)\s-]*|^[-\*\u2022]\s*/, '').trim();
+            })
+            .filter(name => name.length > 0);
+
+        if (passengers.length === 0) {
+            modalTableBody.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--text-muted);">ไม่มีข้อมูลรายชื่อผู้เดินทาง</td></tr>';
+        } else {
+            passengers.forEach((p, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: center; font-weight: bold;">${idx + 1}</td>
+                    <td>${p}</td>
+                `;
+                modalTableBody.appendChild(tr);
+            });
+        }
+
+        // Set dataset on download PDF button
+        document.getElementById('btn-download-passengers-pdf').setAttribute('data-booking-id', booking.id);
+
+        // Open modal
+        const pm = document.getElementById('passenger-modal');
+        if (pm) {
+            pm.classList.add('active');
+        }
+    }
+
+    // Bind passenger modal close events
+    const closePmBtn = document.getElementById('close-passenger-modal');
+    if (closePmBtn) {
+        closePmBtn.addEventListener('click', () => {
+            document.getElementById('passenger-modal').classList.remove('active');
+        });
+    }
+
+    const btnClosePm = document.getElementById('btn-close-pm');
+    if (btnClosePm) {
+        btnClosePm.addEventListener('click', () => {
+            document.getElementById('passenger-modal').classList.remove('active');
+        });
+    }
+
+    // Bind download passenger list PDF button click
+    const btnDownloadPassengersPdf = document.getElementById('btn-download-passengers-pdf');
+    if (btnDownloadPassengersPdf) {
+        btnDownloadPassengersPdf.addEventListener('click', () => {
+            const bookingId = parseInt(btnDownloadPassengersPdf.getAttribute('data-booking-id'));
+            if (window.pdfGenerator && typeof window.pdfGenerator.generatePassengerListPDF === 'function') {
+                window.pdfGenerator.generatePassengerListPDF(bookingId);
+            } else {
+                alert('ไม่พบฟังก์ชันสำหรับสร้าง PDF');
+            }
         });
     }
 

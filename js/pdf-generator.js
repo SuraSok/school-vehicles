@@ -404,6 +404,208 @@ const pdfGenerator = {
             printWin.document.write(element.innerHTML);
             printWin.document.close();
             printWin.print();
+        }
+    },
+    generatePassengerListPDF(bookingId) {
+        const booking = db.getBookings().find(b => b.id === bookingId);
+        if (!booking) {
+            alert('ไม่พบข้อมูลการขอใช้รถ');
+            return;
+        }
+
+        const depts = db.getDepartments();
+        const drivers = db.getDrivers();
+        const vehicles = db.getVehicles();
+        const assignments = db.getAssignments();
+
+        const dept = depts.find(d => d.id === booking.department_id);
+        const deptName = dept ? dept.name : 'ทั่วไป';
+        
+        // Find vehicle and driver details
+        const assignment = assignments.find(a => a.booking_id === booking.id);
+        const vehicle = assignment ? vehicles.find(v => v.id === assignment.vehicle_id) : null;
+        const driver = assignment ? drivers.find(d => d.id === assignment.driver_id) : null;
+        
+        const vehicleInfo = vehicle ? `${vehicle.type === 'new_van' ? 'รถตู้ใหม่' : vehicle.type === 'old_van' ? 'รถตู้เก่า' : vehicle.type === 'six_wheeler_truck' ? 'รถหกล้อ' : 'รถยนต์ส่วนกลาง'} ทะเบียน ${vehicle.license_plate}` : 'ยังไม่ได้จัดสรรรถยนต์';
+        const driverName = driver ? driver.full_name : 'ยังไม่ได้จัดสรรพนักงานขับรถ';
+
+        // Parse date values
+        const months = [
+            'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+        ];
+        
+        const startDate = new Date(booking.start_date_time);
+        const endDate = new Date(booking.end_date_time);
+        
+        const startDayFormatted = startDate.getDate();
+        const startMonth = months[startDate.getMonth()];
+        const startYear = startDate.getFullYear() + 543;
+        const startHourFormatted = String(startDate.getHours()).padStart(2, '0') + '.' + String(startDate.getMinutes()).padStart(2, '0');
+
+        const endDayFormatted = endDate.getDate();
+        const endMonth = months[endDate.getMonth()];
+        const endYear = endDate.getFullYear() + 543;
+        const endHourFormatted = String(endDate.getHours()).padStart(2, '0') + '.' + String(endDate.getMinutes()).padStart(2, '0');
+
+        // Parse passengers list
+        const rawPassengers = booking.passenger_details || '';
+        const passengers = rawPassengers.split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => {
+                // Remove numbering prefixes
+                return line.replace(/^\d+[\.\)\s-]*|^[-\*\u2022]\s*/, '').trim();
+            })
+            .filter(name => name.length > 0);
+
+        // Create PDF element
+        const element = document.createElement('div');
+        element.style.padding = '25px 35px';
+        element.style.fontFamily = "'TH Sarabun PSK', 'THSarabunNew', 'Sarabun', sans-serif";
+        element.style.color = '#000';
+        element.style.backgroundColor = '#fff';
+        element.style.fontSize = '15px';
+        element.style.lineHeight = '2.0';
+        element.style.width = '700px';
+        element.style.boxSizing = 'border-box';
+
+        element.innerHTML = `
+            <style>
+                .pl-header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .pl-title {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin: 0;
+                    line-height: 1.4;
+                }
+                .pl-subtitle {
+                    font-size: 16px;
+                    font-weight: bold;
+                    margin: 0 0 10px 0;
+                }
+                .pl-details-box {
+                    border: 1px solid #ccc;
+                    padding: 15px;
+                    border-radius: 6px;
+                    margin-bottom: 20px;
+                    line-height: 1.8;
+                }
+                .pl-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-bottom: 30px;
+                }
+                .pl-table th, .pl-table td {
+                    border: 1px solid #000;
+                    padding: 6px 10px;
+                    font-size: 15px;
+                }
+                .pl-table th {
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                .pl-table td.center {
+                    text-align: center;
+                }
+                .pl-sign-container {
+                    display: flex;
+                    justify-content: flex-end;
+                    margin-top: 40px;
+                }
+                .pl-sign-box {
+                    text-align: center;
+                    width: 280px;
+                    line-height: 1.6;
+                }
+            </style>
+            
+            <div class="pl-header">
+                <img src="${logoBase64}" style="width: 55px; height: 55px; object-fit: contain; margin-bottom: 5px;" alt="Logo">
+                <h1 class="pl-title">บัญชีรายชื่อผู้เดินทางแนบท้ายใบขอใช้รถยนต์ส่วนกลาง</h1>
+                <h2 class="pl-subtitle">โรงเรียนมัธยมวชิราลงกรณวราราม</h2>
+            </div>
+            
+            <div class="pl-details-box">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div><strong>อ้างอิงใบขอใช้รถเลขที่:</strong> ${booking.booking_reference}</div>
+                    <div><strong>ผู้เสนอขอใช้รถ:</strong> ${booking.requester_name} (ตำแหน่ง: ${booking.requester_position || 'ครู'})</div>
+                    <div><strong>กลุ่มสาระฯ / กลุ่มงาน:</strong> ${deptName}</div>
+                    <div><strong>ยานพาหนะที่จัดสรร:</strong> ${vehicleInfo}</div>
+                    <div><strong>พนักงานขับรถ:</strong> ${driverName}</div>
+                    <div><strong>ปลายทางปฏิบัติราชการ:</strong> ${booking.destination}</div>
+                </div>
+                <div style="margin-top: 6px; border-top: 1px dashed #ccc; padding-top: 6px;">
+                    <strong>วันเวลาออกเดินทาง:</strong> วันที่ ${startDayFormatted} ${startMonth} พ.ศ. ${startYear} เวลา ${startHourFormatted} น.
+                </div>
+                <div>
+                    <strong>วันเวลาเดินทางกลับ:</strong> วันที่ ${endDayFormatted} ${endMonth} พ.ศ. ${endYear} เวลา ${endHourFormatted} น.
+                </div>
+                <div style="margin-top: 4px;">
+                    <strong>วัตถุประสงค์:</strong> ${booking.objective}
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">รายชื่อผู้เดินทางร่วมเดินทางทั้งหมด จำนวน ${passengers.length} คน</h3>
+            <table class="pl-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">ลำดับที่</th>
+                        <th>ชื่อ-นามสกุล / สังกัด / รายละเอียด</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${passengers.length === 0 ? '<tr><td colspan="2" style="text-align: center;">ไม่มีรายชื่อผู้เดินทางร่วมระบุในระบบ</td></tr>' : passengers.map((p, idx) => `
+                        <tr>
+                            <td class="center">${idx + 1}</td>
+                            <td>${p}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <div class="pl-sign-container">
+                <div class="pl-sign-box">
+                    ลงชื่อ ........................................................... ผู้เสนอขอและแนบรายชื่อ<br>
+                    ( <span style="font-weight: bold;">${booking.requester_name}</span> )<br>
+                    ตำแหน่ง ${booking.requester_position || 'ครู'}
+                </div>
+            </div>
+        `;
+
+        const opt = {
+            margin:       10,
+            filename:     `รายชื่อผู้เดินทางแนบท้าย_${booking.booking_reference}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        document.body.appendChild(element);
+        
+        if (typeof html2pdf !== 'undefined') {
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.body.removeChild(element);
+            }).catch(err => {
+                console.error(err);
+                document.body.removeChild(element);
+                alert('เกิดข้อผิดพลาดในการสร้าง PDF กรุณาลองใหม่อีกครั้ง');
+            });
+        } else {
+            const printWin = window.open('', '_blank');
+            printWin.document.write('<html><head><title>Print Passengers List</title>');
+            printWin.document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">');
+            printWin.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-th-sarabun-new@1.0.0/css/th-sarabun-new.min.css">');
+            printWin.document.write('<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">');
+            printWin.document.write('<style>body { font-family: "TH Sarabun PSK", "THSarabunNew", "Sarabun", sans-serif; padding: 20px; }</style>');
+            printWin.document.write('</head><body>');
+            printWin.document.write(element.innerHTML);
+            printWin.document.close();
+            printWin.print();
             document.body.removeChild(element);
         }
     }

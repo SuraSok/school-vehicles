@@ -1168,11 +1168,57 @@
                     </button>
                 </div>
             </form>
+    <!-- Modal 8: Passenger List Modal -->
+    <div class="modal" id="passenger-modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-users text-primary"></i> รายชื่อผู้เดินทาง</h3>
+                <button class="modal-close" id="close-passenger-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Travel Details Section -->
+                <div style="background: rgba(var(--primary-rgb), 0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary); background-color: rgba(9, 132, 227, 0.05);">
+                    <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 15px; color: var(--primary);"><i class="fas fa-info-circle"></i> รายละเอียดการเดินทาง</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                        <div><strong>รหัสใบขอ:</strong> <span id="pm-booking-ref">-</span></div>
+                        <div><strong>ผู้ขอใช้รถ / สังกัด:</strong> <span id="pm-requester">-</span></div>
+                        <div><strong>วันเวลาเดินทางออก:</strong> <span id="pm-start-time">-</span></div>
+                        <div><strong>วันเวลาเดินทางกลับ:</strong> <span id="pm-end-time">-</span></div>
+                        <div><strong>รถที่ใช้ / ทะเบียน:</strong> <span id="pm-vehicle">-</span></div>
+                        <div><strong>ปลายทาง:</strong> <span id="pm-destination">-</span></div>
+                    </div>
+                    <div style="font-size: 14px; margin-top: 10px; border-top: 1px dashed rgba(0,0,0,0.1); padding-top: 10px;">
+                        <strong>วัตถุประสงค์:</strong> <span id="pm-objective">-</span>
+                    </div>
+                </div>
+
+                <!-- Passenger List Table Section -->
+                <h4 style="margin-top: 0; margin-bottom: 10px; font-size: 15px;"><i class="fas fa-list-ol"></i> ตารางรายชื่อผู้เดินทาง</h4>
+                <div class="table-responsive">
+                    <table class="custom-table" id="passenger-list-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px; text-align: center;">ลำดับที่</th>
+                                <th>ชื่อ-นามสกุล / ตำแหน่ง</th>
+                            </tr>
+                        </thead>
+                        <tbody id="passenger-list-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" id="btn-close-pm" style="padding: 8px 16px;">ปิด</button>
+                <button type="button" class="btn btn-primary" id="btn-download-passengers-pdf" style="padding: 8px 16px;">
+                    <i class="fas fa-file-pdf"></i> ดาวน์โหลดรายชื่อ (PDF)
+                </button>
+            </div>
         </div>
     </div>
 
-    <script src="js/db.js?v=20260702"></script>
-    <script src="js/pdf-generator.js?v=20260702_v2"></script>
-    <script src="js/app.js?v=20260702"></script>
+    <script src="js/db.js?v=20260702_v3"></script>
+    <script src="js/pdf-generator.js?v=20260702_v3"></script>
+    <script src="js/app.js?v=20260702_v3"></script>
 </body>
 </html>
