@@ -385,6 +385,64 @@ const pdfGenerator = {
         // Render as PDF
         document.body.appendChild(element);
         
+        // Dynamically scale font sizes, line heights, and margins to guarantee fitting on a single A4 page
+        let maxLoops = 12;
+        let baseFontSize = 13.5;
+        let baseLineHeight = 2.0;
+        
+        while (element.offsetHeight > 920 && maxLoops > 0) {
+            baseFontSize -= 0.3;
+            baseLineHeight = Math.max(1.3, baseLineHeight - 0.05);
+            
+            element.style.fontSize = `${baseFontSize}px`;
+            element.style.lineHeight = `${baseLineHeight}`;
+            
+            // Adjust body classes
+            const pdfPs = element.querySelectorAll('.pdf-body-p, .pdf-line, .pdf-checkboxes');
+            pdfPs.forEach(p => {
+                p.style.fontSize = `${baseFontSize}px`;
+                p.style.lineHeight = `${baseLineHeight}`;
+                const currentMb = parseFloat(p.style.marginBottom) || 3;
+                p.style.marginBottom = `${Math.max(1, currentMb - 0.5)}px`;
+            });
+            
+            // Adjust elements with custom inline font-sizes
+            const customFontElems = element.querySelectorAll('[style*="font-size"]');
+            customFontElems.forEach(el => {
+                const currentFs = parseFloat(el.style.fontSize);
+                if (!isNaN(currentFs)) {
+                    el.style.fontSize = `${Math.max(10.5, currentFs - 0.25)}px`;
+                }
+            });
+            
+            // Adjust elements with custom inline line-heights
+            const customLhElems = element.querySelectorAll('[style*="line-height"]');
+            customLhElems.forEach(el => {
+                const currentLh = parseFloat(el.style.lineHeight);
+                if (!isNaN(currentLh)) {
+                    el.style.lineHeight = `${Math.max(1.2, currentLh - 0.05)}`;
+                }
+            });
+            
+            // Adjust elements with custom inline margin-bottoms
+            const customMbElems = element.querySelectorAll('[style*="margin-bottom"]');
+            customMbElems.forEach(el => {
+                const currentMb = parseFloat(el.style.marginBottom);
+                if (!isNaN(currentMb)) {
+                    el.style.marginBottom = `${Math.max(1, currentMb - 0.5)}px`;
+                }
+            });
+            
+            // Adjust headings
+            const headings = element.querySelectorAll('h1, h4');
+            headings.forEach(h => {
+                const currentFs = parseFloat(window.getComputedStyle(h).fontSize) || 15;
+                h.style.fontSize = `${Math.max(11, currentFs - 0.3)}px`;
+            });
+            
+            maxLoops--;
+        }
+        
         if (typeof html2pdf !== 'undefined') {
             html2pdf().set(opt).from(element).save().then(() => {
                 document.body.removeChild(element);
