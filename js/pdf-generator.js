@@ -286,16 +286,14 @@ const pdfGenerator = {
                 ในวันที่ <span class="underlined-text">${startDayFormatted}</span> 
                 เดือน <span class="underlined-text">${startMonth}</span> 
                 พ.ศ. <span class="underlined-text">${startYear}</span> 
-                เวลา <span class="underlined-text">${startHourFormatted}</span> น. 
-                ถึง เวลา <span class="underlined-text">${isSameDay ? endHourFormatted : '24.00'}</span> น.
+                เวลา <span class="underlined-text">${startHourFormatted}</span> น.
             </div>
             
             <div class="pdf-line">
                 ถึงวันที่ <span class="underlined-text">${endDayFormatted}</span> 
                 เดือน <span class="underlined-text">${endMonth}</span> 
                 พ.ศ. <span class="underlined-text">${endYear}</span> 
-                เวลา <span class="underlined-text">${isSameDay ? startHourFormatted : '00.00'}</span> น. 
-                ถึง เวลา <span class="underlined-text">${endHourFormatted}</span> น.
+                เวลา <span class="underlined-text">${endHourFormatted}</span> น.
             </div>
 
             <div class="pdf-line" style="margin-bottom: 6px;">
