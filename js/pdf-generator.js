@@ -194,7 +194,7 @@ const pdfGenerator = {
                 }
                 .underlined-text {
                     font-weight: bold;
-                    border-bottom: 1px dotted #555;
+                    border-bottom: 1px solid #666;
                     padding: 0 4px 1px 4px;
                     margin: 0 2px;
                     display: inline;
@@ -203,14 +203,14 @@ const pdfGenerator = {
                 .pdf-body-p {
                     text-indent: 40px;
                     margin-bottom: 3px;
-                    text-align: justify;
-                    line-height: 1.75;
+                    text-align: left;
+                    line-height: 2.0;
                     font-size: 13.5px;
                 }
                 .pdf-line {
                     margin-bottom: 3px;
-                    text-align: justify;
-                    line-height: 1.75;
+                    text-align: left;
+                    line-height: 2.0;
                     font-size: 13.5px;
                 }
                 .pdf-checkboxes {
@@ -219,7 +219,7 @@ const pdfGenerator = {
                     display: flex;
                     flex-direction: column;
                     gap: 3px;
-                    line-height: 1.75;
+                    line-height: 2.0;
                     font-size: 13.5px;
                 }
             </style>
@@ -260,7 +260,7 @@ const pdfGenerator = {
             <div class="pdf-body-p">
                 ด้วยข้าพเจ้า (นาย / นาง /นางสาว /ยศ) <span class="underlined-text">${booking.requester_name}</span>
                 ตำแหน่ง <span class="underlined-text">${position}</span> กลุ่มสาระการเรียนรู้ / กลุ่มงาน <span class="underlined-text">${deptName}</span>
-                มีความประสงค์ขอใช้รถยนต์ส่วนกลางของโรงเรียน เพื่อ <span class="underlined-text">${booking.objective}</span>
+                มีความประสงค์ขอใช้รถยนต์ส่วนกลางของโรงเรียน เพื่อ &nbsp;<span class="underlined-text">&nbsp;${booking.objective}&nbsp;</span>
             </div>
  
             <div class="pdf-checkboxes">
@@ -272,7 +272,7 @@ const pdfGenerator = {
                 <div>
                     <span>${isSeminar ? '(✓)' : '( &nbsp; )'}</span> อบรม / สัมมนา
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <span>${isOther ? '(✓)' : '( &nbsp; )'}</span> อื่นๆ (โปรดระบุ) <span class="underlined-text">${otherText || '....................................................................'}</span>
+                    <span>${isOther ? '(✓)' : '( &nbsp; )'}</span> อื่นๆ (โปรดระบุ) &nbsp;<span class="underlined-text">&nbsp;${otherText || '....................................................................'}&nbsp;</span>
                 </div>
             </div>
  
