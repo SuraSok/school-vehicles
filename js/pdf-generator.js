@@ -164,8 +164,8 @@ const pdfGenerator = {
         element.style.fontFamily = "'TH Sarabun PSK', 'THSarabunNew', 'Sarabun', sans-serif";
         element.style.color = '#000';
         element.style.backgroundColor = '#fff';
-        element.style.fontSize = '15px';
-        element.style.lineHeight = '2.2';
+        element.style.fontSize = '13.5px';
+        element.style.lineHeight = '1.75';
         element.style.width = '700px'; // Standard A4 width in px for pdf rendering
         element.style.boxSizing = 'border-box';
 
@@ -175,22 +175,22 @@ const pdfGenerator = {
                 .memo-header {
                     position: relative;
                     text-align: center;
-                    margin-bottom: 8px;
-                    height: 55px;
+                    margin-bottom: 5px;
+                    height: 50px;
                 }
                 .memo-logo {
                     position: absolute;
                     left: 0;
                     top: -5px;
-                    width: 50px;
-                    height: 50px;
+                    width: 45px;
+                    height: 45px;
                     object-fit: contain;
                 }
                 .memo-title {
-                    font-size: 24px;
+                    font-size: 22px;
                     font-weight: bold;
                     margin: 0;
-                    line-height: 55px;
+                    line-height: 50px;
                 }
                 .underlined-text {
                     font-weight: bold;
@@ -202,25 +202,25 @@ const pdfGenerator = {
                 }
                 .pdf-body-p {
                     text-indent: 40px;
-                    margin-bottom: 4px;
+                    margin-bottom: 3px;
                     text-align: justify;
-                    line-height: 2.2;
-                    font-size: 15px;
+                    line-height: 1.75;
+                    font-size: 13.5px;
                 }
                 .pdf-line {
-                    margin-bottom: 4px;
+                    margin-bottom: 3px;
                     text-align: justify;
-                    line-height: 2.2;
-                    font-size: 15px;
+                    line-height: 1.75;
+                    font-size: 13.5px;
                 }
                 .pdf-checkboxes {
                     margin-left: 40px;
-                    margin-bottom: 4px;
+                    margin-bottom: 3px;
                     display: flex;
                     flex-direction: column;
-                    gap: 4px;
-                    line-height: 2.2;
-                    font-size: 15px;
+                    gap: 3px;
+                    line-height: 1.75;
+                    font-size: 13.5px;
                 }
             </style>
             
@@ -231,12 +231,12 @@ const pdfGenerator = {
             </div>
             
             <!-- Metadata Section -->
-            <div style="margin-bottom: 4px; font-size: 15px;">
+            <div style="margin-bottom: 3px; font-size: 13.5px;">
                 <span style="font-weight: bold; width: 80px; display: inline-block;">ส่วนราชการ</span>
                 <span>โรงเรียนมัธยมวชิราลงกรณวราราม สพม.นครราชสีมา</span>
             </div>
             
-            <div style="margin-bottom: 4px; font-size: 15px; display: flex; justify-content: space-between;">
+            <div style="margin-bottom: 3px; font-size: 13.5px; display: flex; justify-content: space-between;">
                 <div style="flex-grow: 1; display: flex;">
                     <span style="font-weight: bold; width: 30px;">ที่</span>
                     <span style="flex-grow: 1; border-bottom: 1px dotted #000; padding-left: 5px; padding-bottom: 2px; font-weight: bold; min-width: 150px;">${booking.booking_reference}</span>
@@ -247,22 +247,22 @@ const pdfGenerator = {
                 </div>
             </div>
             
-            <div style="margin-bottom: 6px; font-size: 15px; padding-bottom: 2px; border-bottom: 2px solid #000;">
+            <div style="margin-bottom: 5px; font-size: 13.5px; padding-bottom: 2px; border-bottom: 2px solid #000;">
                 <span style="font-weight: bold; width: 50px; display: inline-block;">เรื่อง</span>
                 <span style="font-weight: bold;">ขออนุญาตใช้รถยนต์ส่วนกลางของโรงเรียนไปราชการ</span>
             </div>
-
-            <div style="margin-bottom: 6px; font-size: 15px;">
+ 
+            <div style="margin-bottom: 5px; font-size: 13.5px;">
                 <span style="font-weight: bold; margin-right: 8px;">เรียน</span> ผู้อำนวยการโรงเรียนมัธยมวชิราลงกรณวราราม
             </div>
-
+ 
             <!-- Body Section -->
             <div class="pdf-body-p">
                 ด้วยข้าพเจ้า (นาย / นาง /นางสาว /ยศ) <span class="underlined-text">${booking.requester_name}</span>
                 ตำแหน่ง <span class="underlined-text">${position}</span> กลุ่มสาระการเรียนรู้ / กลุ่มงาน <span class="underlined-text">${deptName}</span>
-                มีความประสงค์ขอใช้รถยนต์ส่วนกลางของโรงเรียน เพื่อ <span class="underlined-text" style="line-height: 2.0;">${booking.objective}</span>
+                มีความประสงค์ขอใช้รถยนต์ส่วนกลางของโรงเรียน เพื่อ <span class="underlined-text">${booking.objective}</span>
             </div>
-
+ 
             <div class="pdf-checkboxes">
                 <div>
                     <span>${isCoord ? '(✓)' : '( &nbsp; )'}</span> ไปติดต่อประสานงานราชการ
@@ -272,16 +272,16 @@ const pdfGenerator = {
                 <div>
                     <span>${isSeminar ? '(✓)' : '( &nbsp; )'}</span> อบรม / สัมมนา
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <span>${isOther ? '(✓)' : '( &nbsp; )'}</span> อื่นๆ (โปรดระบุ) <span class="underlined-text" style="line-height: 2.0;">${otherText || '....................................................................'}</span>
+                    <span>${isOther ? '(✓)' : '( &nbsp; )'}</span> อื่นๆ (โปรดระบุ) <span class="underlined-text">${otherText || '....................................................................'}</span>
                 </div>
             </div>
-
+ 
             <div class="pdf-body-p">
                 จำนวนผู้โดยสาร ครู <span class="underlined-text">${teacherCount}</span> คน 
                 นักเรียน <span class="underlined-text">${studentCount}</span> คน 
                 ณ (โปรดระบุสถานที่) <span class="underlined-text">${booking.destination}</span>
             </div>
-
+ 
             <div class="pdf-line">
                 ในวันที่ <span class="underlined-text">${startDayFormatted}</span> 
                 เดือน <span class="underlined-text">${startMonth}</span> 
@@ -295,76 +295,76 @@ const pdfGenerator = {
                 พ.ศ. <span class="underlined-text">${endYear}</span> 
                 เวลา <span class="underlined-text">${endHourFormatted}</span> น.
             </div>
-
-            <div class="pdf-line" style="margin-bottom: 6px;">
+ 
+            <div class="pdf-line" style="margin-bottom: 5px;">
                 โดยใช้น้ำมันเชื้อเพลิงจาก &nbsp;&nbsp;
                 <span>(✓)</span> ส่วนกลาง &nbsp;&nbsp;
                 <span>( &nbsp; )</span> ส่วนตัว &nbsp;&nbsp;
                 <span>( &nbsp; )</span> อื่นๆ (โปรดระบุ) ........................................
             </div>
-
+ 
             <div class="pdf-body-p">
                 จึงเรียนมาเพื่อโปรดพิจารณา
             </div>
-
+ 
             <!-- Requester Signature -->
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 8px; padding-right: 20px;">
-                <div style="text-align: center; width: 250px; line-height: 1.5;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 5px; padding-right: 20px;">
+                <div style="text-align: center; width: 250px; font-size: 13.5px; line-height: 1.4;">
                     <br>ลงชื่อ ..........................................<br>
                     ( <span style="font-weight: bold;">${booking.requester_name}</span> )<br>
                     ผู้ขอใช้รถ
                 </div>
             </div>
-
+ 
             <!-- Section 2: Vehicle Head Opinion -->
-            <div style="padding: 4px 0; margin-bottom: 8px; border-top: 1px solid #000; padding-top: 4px;">
-                <h4 style="font-size: 15px; font-weight: bold; margin: 0 0 2px 0;">ความคิดเห็นของหัวหน้างานยานพาหนะและบริการสาธารณะ</h4>
-                <div style="margin-bottom: 2px; font-size: 15px; line-height: 2.0;">
+            <div style="padding: 3px 0; margin-bottom: 5px; border-top: 1px solid #000; padding-top: 3px;">
+                <h4 style="font-size: 13.5px; font-weight: bold; margin: 0 0 2px 0;">ความคิดเห็นของหัวหน้างานยานพาหนะและบริการสาธารณะ</h4>
+                <div style="margin-bottom: 2px; font-size: 13px; line-height: 1.6;">
                     <span>${isSchoolCar ? '(✓)' : '( &nbsp; )'}</span> มอบหมายหน้าที่ให้ <span class="underlined-text">${isSchoolCar ? driverName : '................................................'}</span> เป็นพนักงานขับรถ 
                     และใช้รถยนต์หมายเลขทะเบียน <span class="underlined-text">${isSchoolCar ? vehicleLicense : '................................................'}</span>
                 </div>
-                <div style="margin-bottom: 4px; font-size: 15px; line-height: 2.0;">
+                <div style="margin-bottom: 3px; font-size: 13px; line-height: 1.6;">
                     <span>${isHiredCar ? '(✓)' : '( &nbsp; )'}</span> รถโรงเรียนไม่ว่าง ให้ไปรถรับจ้างตามระเบียบสำนักนายกฯ
                 </div>
                 <div style="display: flex; justify-content: flex-end; padding-right: 20px;">
-                    <div style="text-align: center; width: 250px; font-size: 15px; line-height: 1.5;">
+                    <div style="text-align: center; width: 250px; font-size: 13px; line-height: 1.4;">
                         <br>ลงชื่อ ..........................................<br>
                         ( นายสิรวิชญ์ หล้าพันธ์ )<br>
                         หัวหน้างานยานพาหนะ
                     </div>
                 </div>
             </div>
-
+ 
             <!-- Section 3: Approver & Director Order side-by-side -->
-            <div style="display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #000; padding-top: 4px;">
+            <div style="display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #000; padding-top: 3px;">
                 <!-- Left Box: Deputy Director -->
-                <div style="width: 50%; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px;">
+                <div style="width: 50%; display: flex; flex-direction: column; justify-content: space-between; min-height: 95px;">
                     <div>
-                        <h4 style="font-size: 15px; font-weight: bold; margin: 0 0 2px 0;">ความคิดเห็นของรองผู้อำนวยการกลุ่มบริหารทั่วไป</h4>
-                        <div style="font-size: 14px; line-height: 1.8; display: flex; flex-direction: column; gap: 1px;">
+                        <h4 style="font-size: 13.5px; font-weight: bold; margin: 0 0 2px 0;">ความคิดเห็นของรองผู้อำนวยการกลุ่มบริหารทั่วไป</h4>
+                        <div style="font-size: 12.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 1px;">
                             <div><span>${isApproved ? '(✓)' : '( &nbsp; )'}</span> เสนอเพื่อโปรดพิจารณา</div>
                             <div><span>${isApproved ? '(✓)' : '( &nbsp; )'}</span> เห็นสมควรอนุญาต</div>
                             <div><span>${isRejected ? '(✓)' : '( &nbsp; )'}</span> ไม่อนุญาต เนื่องจาก <span style="font-weight: bold; border-bottom: 1px dotted #000; padding: 0 4px 1px 4px; display: inline;">${isRejected ? booking.rejection_reason : '................................'}</span></div>
                         </div>
                     </div>
-                    <div style="text-align: center; font-size: 15px; margin-top: 6px; line-height: 1.5;">
+                    <div style="text-align: center; font-size: 13px; margin-top: 5px; line-height: 1.4;">
                         <br>ลงชื่อ ..........................................<br>
                         ( นายสุรวุฒิ ซอกรัมย์ )<br>
                         รองผู้อำนวยการกลุ่มบริหารทั่วไป
                     </div>
                 </div>
-
+ 
                 <!-- Right Box: Director -->
-                <div style="width: 50%; display: flex; flex-direction: column; justify-content: space-between; min-height: 100px;">
+                <div style="width: 50%; display: flex; flex-direction: column; justify-content: space-between; min-height: 95px;">
                     <div>
-                        <h4 style="font-size: 15px; font-weight: bold; margin: 0 0 2px 0;">คำสั่งของผู้อำนวยการโรงเรียน</h4>
-                        <div style="font-size: 14px; line-height: 1.8; display: flex; flex-direction: column; gap: 1px;">
+                        <h4 style="font-size: 13.5px; font-weight: bold; margin: 0 0 2px 0;">คำสั่งของผู้อำนวยการโรงเรียน</h4>
+                        <div style="font-size: 12.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 1px;">
                             <div><span>${isApproved ? '(✓)' : '( &nbsp; )'}</span> ทราบ</div>
                             <div><span>${isApproved ? '(✓)' : '( &nbsp; )'}</span> อนุญาต</div>
                             <div><span>${isRejected ? '(✓)' : '( &nbsp; )'}</span> ไม่อนุญาต เนื่องจาก <span style="font-weight: bold; border-bottom: 1px dotted #000; padding: 0 4px 1px 4px; display: inline;">${isRejected ? booking.rejection_reason : '................................'}</span></div>
                         </div>
                     </div>
-                    <div style="text-align: center; font-size: 15px; margin-top: 6px; line-height: 1.5;">
+                    <div style="text-align: center; font-size: 13px; margin-top: 5px; line-height: 1.4;">
                         <br>ลงชื่อ ..........................................<br>
                         ( นายอิสรา รักชาติ )<br>
                         ผู้อำนวยการโรงเรียนมัธยมวชิราลงกรณวราราม
