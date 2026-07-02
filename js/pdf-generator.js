@@ -160,7 +160,7 @@ const pdfGenerator = {
 
         // Create HTML element to print
         const element = document.createElement('div');
-        element.style.padding = '10px 25px';
+        element.style.padding = '0';
         element.style.fontFamily = "'TH Sarabun PSK', 'THSarabunNew', 'Sarabun', sans-serif";
         element.style.color = '#000';
         element.style.backgroundColor = '#fff';
@@ -375,7 +375,7 @@ const pdfGenerator = {
 
         // Configure PDF rendering options
         const opt = {
-            margin:       10,
+            margin:       [5, 12, 5, 12],
             filename:     `ใบขอใช้รถ_${booking.booking_reference}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
@@ -461,7 +461,7 @@ const pdfGenerator = {
 
         // Create PDF element
         const element = document.createElement('div');
-        element.style.padding = '25px 35px';
+        element.style.padding = '0';
         element.style.fontFamily = "'TH Sarabun PSK', 'THSarabunNew', 'Sarabun', sans-serif";
         element.style.color = '#000';
         element.style.backgroundColor = '#fff';
@@ -578,7 +578,7 @@ const pdfGenerator = {
         `;
 
         const opt = {
-            margin:       10,
+            margin:       [10, 15, 10, 15],
             filename:     `รายชื่อผู้เดินทางแนบท้าย_${booking.booking_reference}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true },
